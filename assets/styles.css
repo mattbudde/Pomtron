@@ -1,6 +1,17 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
 body {
-    background-color: white;
-    font-family: 'Open Sans', sans-serif;
+    background-color:#011627;
 }
+.container {
+    display: grid;
+    justify-items: center;
+} 
+h1 {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 25px;
+    color: #ff3366;
+}
+
+/*Color Pallete*/
+/* #011627, #ff3366, #2ec4b6, #f6f7f8, #20a4f3 */
