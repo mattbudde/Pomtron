@@ -1,0 +1,26 @@
+{
+  "name": "pomtron",
+  "version": "1.0.0",
+  "description": "Simple Pomodoro App in your Menubar",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "electron-toolkit": "electron ./node_modules/electron-toolkit"
+  },
+  "repository": "https://github.com/mattbudde/Pomtron",
+  "keywords": [
+    "Electron",
+    "Pomodoro",
+    "Timer",
+    "MenuBar"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "~1.7.8",
+    "electron-toolkit": "^1.0.24"
+  },
+  "dependencies": {
+    "moment-timezone": "^0.5.14"
+  }
+}
