@@ -30,7 +30,7 @@ app.on('ready', () => {
     height: 350,
     show: false,
     frame: false,
-    resizable: false,
+    resizable: true,
   })
 
   // Tell the popup window to load our index.html file

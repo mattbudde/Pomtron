@@ -2,14 +2,12 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 const {ipcRenderer} = require('electron');
-const moment = require('moment-timezone');
+const TimeDown = require('timedown');
 
-document.addEventListener('DOMContentLoaded', () => {
-    let n = new Notification('You did it!', {
-      body: 'Nice work.'
-    })
-  
-    // Tell the notification to show the menubar popup window on click
-    n.onclick = () => { ipcRenderer.send('show-window') }
-  
-  })
+let timer = TimeDown();
+
+
+
+
+
+

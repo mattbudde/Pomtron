@@ -21,6 +21,7 @@
     "electron-toolkit": "^1.0.24"
   },
   "dependencies": {
-    "moment-timezone": "^0.5.14"
+    "babel-polyfill": "^6.26.0",
+    "timedown": "^1.0.19"
   }
 }
