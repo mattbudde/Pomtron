@@ -1,27 +1,58 @@
 {
-  "name": "pomotron",
-  "version": "1.0.0",
-  "description": "Simple Pomodoro App in your Menubar",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "electron-toolkit": "electron ./node_modules/electron-toolkit"
-  },
-  "repository": "https://github.com/mattbudde/Pomtron",
-  "keywords": [
-    "Electron",
-    "Pomodoro",
-    "Timer",
-    "MenuBar"
-  ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
-  "devDependencies": {
-    "electron": "~1.7.8",
-    "electron-toolkit": "^1.0.24"
-  },
-  "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "timedown": "^1.0.19"
-  }
+    "name": "pomotron",
+    "version": "1.0.0",
+    "description": "A Pomodoro app in your tray!",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "tk": "electron ./node_modules/electron-toolkit"
+    },
+    "repository": "https://github.com/mattbudde/Pomtron",
+    "keywords": [
+        "Electron",
+        "Pomodoro",
+        "Timer",
+        "MenuBar"
+    ],
+    "author": "Matt Budde",
+    "license": "CC0-1.0",
+    "devDependencies": {
+        "electron": "~1.7.8",
+        "electron-builder": "^19.52.1",
+        "electron-toolkit": "^1.0.24"
+    },
+    "dependencies": {
+        "babel-polyfill": "^6.26.0"
+    },
+    "build": {
+        "appId": "com.electron.pomotron",
+        "copyright": "Copyright © 2018 Matt Budde",
+        "productName": "Pomotron",
+        "electronVersion": "1.7.9",
+        "asar": true,
+        "directories": {
+            "app": "/Users/matthewbudde/pomotron",
+            "output": "dist"
+        },
+        "mac": {
+            "target": [
+                {
+                    "target": "dmg",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ],
+            "category": "public.app-category.productivity"
+        },
+        "publish": {
+            "provider": "github",
+            "repo": "https://github.com/mattbudde/Pomtron",
+            "owner": "Matt Budde",
+            "token": "edd1835f8dabdd11416cf22151452fec23f4f296",
+            "vPrefixedTagName": true,
+            "releaseType": "release",
+            "private": false
+        }
+    }
 }

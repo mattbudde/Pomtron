@@ -27,10 +27,10 @@ app.on('ready', () => {
   // Make the popup window for the menubar
   window = new BrowserWindow({
     width: 300,
-    height: 350,
+    height: 175,
     show: false,
     frame: false,
-    resizable: true,
+    resizable: false,
   })
 
   // Tell the popup window to load our index.html file
