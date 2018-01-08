@@ -44,15 +44,6 @@
                 }
             ],
             "category": "public.app-category.productivity"
-        },
-        "publish": {
-            "provider": "github",
-            "repo": "https://github.com/mattbudde/Pomtron",
-            "owner": "Matt Budde",
-            "token": "edd1835f8dabdd11416cf22151452fec23f4f296",
-            "vPrefixedTagName": true,
-            "releaseType": "release",
-            "private": false
         }
     }
 }
