@@ -1,7 +1,7 @@
 {
     "name": "pomotron",
     "version": "1.0.0",
-    "description": "A Pomodoro app in your tray!",
+    "description": "Pomodoro timer in your tray!",
     "main": "main.js",
     "scripts": {
         "start": "electron .",
@@ -22,7 +22,8 @@
         "electron-toolkit": "^1.0.24"
     },
     "dependencies": {
-        "babel-polyfill": "^6.26.0"
+        "babel-polyfill": "^6.26.0",
+        "electron-gh-releases": "^2.0.4"
     },
     "build": {
         "appId": "com.electron.pomotron",
@@ -38,6 +39,12 @@
             "target": [
                 {
                     "target": "dmg",
+                    "arch": [
+                        "x64"
+                    ]
+                },
+                {
+                    "target": "zip",
                     "arch": [
                         "x64"
                     ]

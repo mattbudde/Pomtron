@@ -1,14 +1,34 @@
-const {app, BrowserWindow, ipcMain, Tray, nativeImage} = require('electron')
-const path = require('path')
+const {app, BrowserWindow, ipcMain, Tray, nativeImage} = require('electron');
+const path = require('path');
+const assetsDir = path.join(__dirname, 'assets');
 
-const assetsDir = path.join(__dirname, 'assets')
+//Updater
+const GhReleases = require('electron-gh-releases');
 
-let tray = undefined
-let window = undefined
+let tray = undefined;
+let window = undefined;
 
 // This method is called once Electron is ready to run our code
 // It is effectively the main method of our Electron app
 app.on('ready', () => {
+  let options = {
+    repo: 'mattbudde/pomotron',
+    currentVersion: app.getVersion()
+  };
+  
+  const updater = new GhReleases(options)
+  
+  updater.check((err, status) => {
+    if (!err && status) {
+      updater.download();
+    }
+  })
+  
+  updater.on('update-downloaded', (info) => {
+    updater.install();
+  })
+  
+  updater.autoUpdater;
   // Setup the menubar with an icon
   let icon = nativeImage.createFromDataURL(base64Icon)
   tray = new Tray(icon)
@@ -26,11 +46,11 @@ app.on('ready', () => {
 
   // Make the popup window for the menubar
   window = new BrowserWindow({
-    width: 300,
+    width: 305,
     height: 175,
     show: false,
     frame: false,
-    resizable: false,
+    resizable: true,
   })
 
   // Tell the popup window to load our index.html file
