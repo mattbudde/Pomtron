@@ -18,6 +18,7 @@ function timer(seconds) {
 
   if(seconds >= 1500) {
     endTime.textContent = `Get to work!`;
+    timerNotification(seconds);
   } else{
     displayEndTime(then);
   }
@@ -55,7 +56,6 @@ function displayEndTime(timestamp) {
 function startTimer() {
   const seconds = parseInt(this.dataset.time);
   timer(seconds);
-  timerNotification(seconds);
 }
 
 function timerNotification(seconds) {
