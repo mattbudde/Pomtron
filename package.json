@@ -17,7 +17,7 @@
     "author": "Matt Budde",
     "license": "CC0-1.0",
     "devDependencies": {
-        "electron": "~1.7.8",
+        "electron": "^1.7.11",
         "electron-builder": "^19.52.1",
         "electron-toolkit": "^1.0.24"
     },
@@ -28,8 +28,8 @@
     "build": {
         "appId": "com.electron.pomotron",
         "copyright": "Copyright © 2018 Matt Budde",
-        "productName": "Pomotron",
-        "electronVersion": "1.7.9",
+        "productName": "pomotron",
+        "electronVersion": "1.7.11",
         "asar": true,
         "directories": {
             "app": "/Users/matthewbudde/pomotron",
