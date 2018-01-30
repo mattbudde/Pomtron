@@ -1,36 +1,34 @@
-const {app, BrowserWindow, ipcMain, Tray, nativeImage} = require('electron');
+const {app, BrowserWindow, ipcMain, Tray, nativeImage, autoUpdater, systemPreferences} = require('electron');
 const path = require('path');
 const assetsDir = path.join(__dirname, 'assets');
 
 //Updater
-const GhReleases = require('electron-gh-releases');
+var os = require('os');
+var platform = os.platform() + '_' + os.arch();
+var version = app.getVersion();
+
+//autoUpdater.setFeedURL('https://pomotron-updates.herokuapp.com/update/'+platform+'/'+version);
 
 let tray = undefined;
 let window = undefined;
 
+const isDev = require('electron-is-dev');
+
+if (isDev) {
+	console.log('Running in development');
+} else {
+	console.log('Running in production');
+}
+
 // This method is called once Electron is ready to run our code
 // It is effectively the main method of our Electron app
 app.on('ready', () => {
-  let options = {
-    repo: 'mattbudde/pomotron',
-    currentVersion: app.getVersion()
-  };
-  
-  const updater = new GhReleases(options)
-  
-  updater.check((err, status) => {
-    if (!err && status) {
-      updater.download();
-    }
-  })
-  
-  updater.on('update-downloaded', (info) => {
-    updater.install();
-  })
-  
-  updater.autoUpdater;
   // Setup the menubar with an icon
-  let icon = nativeImage.createFromDataURL(base64Icon)
+  if(systemPreferences.isDarkMode(true)) {
+    var icon = `/Users/matthewbudde/pomotron/assets/img/icon-dark.png`
+  } else {
+    var icon = `/Users/matthewbudde/pomotron/assets/img/icon.png`
+  };
   tray = new Tray(icon)
 
   // Add a click handler so that when the user clicks on the menubar icon, it shows
@@ -84,7 +82,6 @@ const showWindow = () => {
     y = Math.round(trayPos.y + trayPos.height * 10)
   }
 
-
   window.setPosition(x, y, false)
   window.show()
   window.focus()
@@ -101,6 +98,3 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
-
-// Tray Icon as Base64 so tutorial has less overhead
-let base64Icon = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABF0lEQVQ4jZXSIU9CYRQG4EfY3Cw0/gFu/gUCSYPZzUShsenGLJiMEjFrMXqNbBr5BcxpctNiJZiZk2Q432UM72Xwbqecc973nO98L//RxD2+MMcP3nGD/YL+BWrIEilDO4m10MU41QaoFpFf8IaDNUMOMcUjKsuFLJFrK4Q7nK/kGvjGZZ5optWKJj/juiB/ihnqxMGykpXLBHbwgQvi2u0tBWCIEbF+s6TpCZ+pMY9+qp3hlfjnVonAcdpgOU5SrYcJYZJuicA63OKBcNh4S/Ku8EOHsOdcmGRT9JPAXp4YpERjA/IRfoUXFqgKe36vFlbW7ifyVVFDRdhzJkwyFF/VEwebpigbsEBdOGwk/nkirt2x9OYcf8X8QrthAWbAAAAAAElFTkSuQmCC`

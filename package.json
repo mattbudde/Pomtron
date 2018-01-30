@@ -1,13 +1,13 @@
 {
-    "name": "pomotron",
-    "version": "1.0.2",
+    "name": "Pomotron",
+    "version": "1.0.3",
     "description": "",
     "main": "main.js",
     "scripts": {
         "start": "electron .",
         "tk": "electron ./node_modules/electron-toolkit"
     },
-    "repository": "https://github.com/mattbudde/Pomtron",
+    "repository": "https://github.com/mattbudde/pomotron",
     "keywords": [
         "Electron",
         "Pomodoro",
@@ -23,12 +23,13 @@
     },
     "dependencies": {
         "babel-polyfill": "^6.26.0",
-        "electron-gh-releases": "^2.0.4"
+        "electron-gh-releases": "^2.0.4",
+        "electron-is-dev": "^0.3.0"
     },
     "build": {
-        "appId": "com.electron.pomotron",
+        "appId": "com.electron.Pomotron",
         "copyright": "Copyright © 2018 Matt Budde",
-        "productName": "pomotron",
+        "productName": "Pomotron",
         "electronVersion": "1.7.11",
         "asar": true,
         "directories": {
