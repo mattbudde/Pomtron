@@ -25,9 +25,9 @@ if (isDev) {
 app.on('ready', () => {
   // Setup the menubar with an icon
   if(systemPreferences.isDarkMode(true)) {
-    var icon = `/Users/matthewbudde/pomotron/assets/img/icon-dark.png`
+    var icon = `assets/img/icon-dark.png`
   } else {
-    var icon = `/Users/matthewbudde/pomotron/assets/img/icon.png`
+    var icon = `assets/img/icon.png`
   };
   tray = new Tray(icon)
 
