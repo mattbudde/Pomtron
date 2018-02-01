@@ -1,25 +1,15 @@
 const {app, BrowserWindow, ipcMain, Tray, nativeImage, autoUpdater, systemPreferences} = require('electron');
 const path = require('path');
 const assetsDir = path.join(__dirname, 'assets');
-
-//Updater
-var os = require('os');
-var platform = os.platform() + '_' + os.arch();
-var version = app.getVersion();
-
-//autoUpdater.setFeedURL('https://pomotron-updates.herokuapp.com/update/'+platform+'/'+version);
+const {appUpdater} = require('./assets/js/autoupdater');
+const isDev = require('electron-is-dev');
 
 let tray = undefined;
 let window = undefined;
 
-const isDev = require('electron-is-dev');
-
-if (isDev) {
-	console.log('Running in development');
-} else {
-	console.log('Running in production');
+function isWindowsOrmacOS() {
+  return process.platform === 'darwin' || process.platform === 'win32';
 }
-
 // This method is called once Electron is ready to run our code
 // It is effectively the main method of our Electron app
 app.on('ready', () => {
@@ -31,6 +21,12 @@ app.on('ready', () => {
   };
   tray = new Tray(icon)
 
+  app.once('did-frame-finish-load', () => {
+    const checkOS = isWindowsOrmacOS();
+    if (checkOS && !isDev) {
+      appUpdater();
+    };
+  });
   // Add a click handler so that when the user clicks on the menubar icon, it shows
   // our popup window
   tray.on('click', function(event) {
