@@ -4,10 +4,11 @@ const {app, autoUpdater, dialog} = require('electron');
 const version = app.getVersion();
 const platform = os.platform() + '_' + os.arch(); // usually returns darwin_64
 
-const updaterFeedURL = 'https://pomotron-updates.herokuapp.com/update/' + platform + '/' + version;
+const server = 'https://hazel-server-dwrilkxyqz.now.sh';
+const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 
 function appUpdater() {
-	autoUpdater.setFeedURL(updaterFeedURL);
+	autoUpdater.setFeedURL(feed);
 	/* Log whats happening
 	TODO send autoUpdater events to renderer so that we could console log it in developer tools
 	You could alsoe use nslog or other logging to see what's happening */
@@ -40,7 +41,9 @@ function appUpdater() {
 		});
 	});
 	// init for updates
-	autoUpdater.checkForUpdates();
+	setInterval(() => {
+		autoUpdater.checkForUpdates();
+	}, 900000)
 }
 
 exports = module.exports = {

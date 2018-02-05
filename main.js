@@ -1,8 +1,12 @@
-const {app, BrowserWindow, ipcMain, Tray, nativeImage, autoUpdater, systemPreferences} = require('electron');
+const {app, BrowserWindow, ipcMain, Tray, nativeImage, systemPreferences} = require('electron');
 const path = require('path');
 const assetsDir = path.join(__dirname, 'assets');
 const {appUpdater} = require('./assets/js/autoupdater');
 const isDev = require('electron-is-dev');
+const powerSaveBlocker = require('electron').powerSaveBlocker;
+
+const darkIcon = path.join(__dirname,'assets/img/icon-dark.png')
+const lightIcon = path.join(__dirname,'assets/img/icon.png')
 
 let tray = undefined;
 let window = undefined;
@@ -15,27 +19,17 @@ function isWindowsOrmacOS() {
 app.on('ready', () => {
   // Setup the menubar with an icon
   if(systemPreferences.isDarkMode(true)) {
-    var icon = `assets/img/icon-dark.png`
+    var icon = darkIcon;
   } else {
-    var icon = `assets/img/icon.png`
+    var icon = lightIcon;
   };
   tray = new Tray(icon)
-
-  app.once('did-frame-finish-load', () => {
-    const checkOS = isWindowsOrmacOS();
-    if (checkOS && !isDev) {
-      appUpdater();
-    };
-  });
   // Add a click handler so that when the user clicks on the menubar icon, it shows
   // our popup window
   tray.on('click', function(event) {
-    toggleWindow()
-
-    // Show devtools when command clicked
-    if (window.isVisible() && process.defaultApp && event.metaKey) {
-      window.openDevTools({mode: 'detach'})
-    }
+    powerSaveBlocker.start('prevent-app-suspension');
+    toggleWindow();
+    appUpdater();
   })
 
   // Make the popup window for the menubar
@@ -85,6 +79,7 @@ const showWindow = () => {
 
 ipcMain.on('show-window', () => {
   showWindow()
+  window.openDevTools();
 })
 
 app.on('window-all-closed', () => {

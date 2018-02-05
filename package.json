@@ -19,7 +19,8 @@
     "devDependencies": {
         "electron": "^1.7.11",
         "electron-builder": "^19.52.1",
-        "electron-toolkit": "^1.0.24"
+        "electron-toolkit": "^1.0.24",
+        "spectron": "^3.8.0"
     },
     "dependencies": {
         "babel-polyfill": "^6.26.0",
