@@ -1,9 +1,11 @@
-const {app, BrowserWindow, ipcMain, Tray, nativeImage, systemPreferences} = require('electron');
+const {app, Menu, BrowserWindow, ipcMain, Tray, nativeImage, systemPreferences} = require('electron');
 const path = require('path');
 const assetsDir = path.join(__dirname, 'assets');
 const {appUpdater} = require('./assets/js/autoupdater');
 const isDev = require('electron-is-dev');
 const powerSaveBlocker = require('electron').powerSaveBlocker;
+
+const openAboutWindow = require('about-window').default;
 
 const darkIcon = path.join(__dirname,'assets/img/icon-dark.png')
 const lightIcon = path.join(__dirname,'assets/img/icon.png')
@@ -11,26 +13,33 @@ const lightIcon = path.join(__dirname,'assets/img/icon.png')
 let tray = undefined;
 let window = undefined;
 
-function isWindowsOrmacOS() {
-  return process.platform === 'darwin' || process.platform === 'win32';
-}
 // This method is called once Electron is ready to run our code
 // It is effectively the main method of our Electron app
 app.on('ready', () => {
+  //Check for updates every 15 Minutes
+  setInterval(function() {
+    appUpdater();
+  }, 900000)
+  // Prevent App being put to sleep
+  powerSaveBlocker.start('prevent-app-suspension');
   // Setup the menubar with an icon
   if(systemPreferences.isDarkMode(true)) {
     var icon = darkIcon;
-  } else {
-    var icon = lightIcon;
-  };
+    } else {
+        var icon = lightIcon;
+    };
   tray = new Tray(icon)
+  //Set Menu of App
+  Menu.setApplicationMenu(menu);
   // Add a click handler so that when the user clicks on the menubar icon, it shows
   // our popup window
   tray.on('click', function(event) {
-    powerSaveBlocker.start('prevent-app-suspension');
     toggleWindow();
-    appUpdater();
   })
+
+  ipcMain.on('open-window', () => {
+    toggleWindow();
+  });
 
   // Make the popup window for the menubar
   window = new BrowserWindow({
@@ -79,7 +88,6 @@ const showWindow = () => {
 
 ipcMain.on('show-window', () => {
   showWindow()
-  window.openDevTools();
 })
 
 app.on('window-all-closed', () => {
@@ -89,3 +97,20 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+//About this app menu build
+const menu = Menu.buildFromTemplate([
+  {
+    label: 'Example',
+    submenu: [
+          {
+            label: 'About This App',
+              click: () =>
+                  openAboutWindow({
+                    icon_path: path.join(__dirname, '/assets/img/logo.png'),
+                    copyright: 'Copyright (c) 2018 Matt Budde',
+                    package_json_dir: __dirname,
+                }),
+            },
+        ],
+    },
+]);

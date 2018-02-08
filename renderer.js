@@ -28,6 +28,7 @@ function timer(seconds) {
       let n = new Notification('Time is up!',{
           body: 'Take a break or keep going!'
       });
+      ipcRenderer.send('open-window');
       return;
     }
     // display it
@@ -57,7 +58,8 @@ function startTimer() {
 
 function timerNotification(seconds) {
     let n = new Notification('Timer started!',{
-        body: 'Gotta go fast'
+        body: 'Gotta go fast',
+        button: 'Keep Going'
     });
 }
 

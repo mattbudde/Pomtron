@@ -1,6 +1,6 @@
 {
     "name": "Pomotron",
-    "version": "1.0.3",
+    "version": "1.0.5",
     "description": "",
     "main": "main.js",
     "scripts": {
@@ -19,13 +19,14 @@
     "devDependencies": {
         "electron": "^1.7.11",
         "electron-builder": "^19.52.1",
-        "electron-toolkit": "^1.0.24",
-        "spectron": "^3.8.0"
+        "electron-toolkit": "^1.0.24"
     },
     "dependencies": {
+        "about-window": "^1.9.1",
         "babel-polyfill": "^6.26.0",
         "electron-gh-releases": "^2.0.4",
-        "electron-is-dev": "^0.3.0"
+        "electron-is-dev": "^0.3.0",
+        "electron-settings": "^3.1.4"
     },
     "build": {
         "appId": "com.electron.Pomotron",

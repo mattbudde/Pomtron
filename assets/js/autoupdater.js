@@ -41,9 +41,7 @@ function appUpdater() {
 		});
 	});
 	// init for updates
-	setInterval(() => {
-		autoUpdater.checkForUpdates();
-	}, 900000)
+	autoUpdater.checkForUpdates();
 }
 
 exports = module.exports = {
