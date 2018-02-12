@@ -1,4 +1,7 @@
 const {ipcRenderer} = require('electron');
+const notifier = require('node-notifier');
+var nc = new notifier.NotificationCenter();
+const path = require('path');
 
 let countdown;
 const timerDisplay = document.querySelector('.display__time-left');
@@ -23,15 +26,38 @@ function timer(seconds) {
   countdown = setInterval(() => {
     const secondsLeft = Math.round((then - Date.now()) / 1000);
     // check if we should stop it!
-    if(secondsLeft < 0) {
-      clearInterval(countdown);
-      let n = new Notification('Time is up!',{
-          body: 'Take a break or keep going!'
-      });
-      ipcRenderer.send('open-window');
-      return;
+    if(secondsLeft == 0) {
+      let trueAnswer = 'Keep Going';
+      let label = 'Break';
+
+      nc.notify(
+        {
+          title: 'Ding!',
+          message: 'Keep going or take a break',
+          sound: 'Funk',
+          icon: path.join(__dirname, 'assets/img/logo.png'),
+          // case sensitive
+          closeLabel: label,
+          actions: trueAnswer
+        },
+        function(err, response, metadata) {
+          if (err) throw err;
+          console.log(metadata);
+
+          if (metadata.activationValue == trueAnswer) {
+            var pomo = document.querySelector('#pomo');
+            seconds = parseInt(pomo.dataset.time);
+            timer(seconds);
+            
+          } else if(metadata.activationValue == label) {
+            const shortBreak = document.querySelector('#short__break');
+            seconds = parseInt(shortBreak.dataset.time);
+            timer(seconds);
+          } 
+        }
+      );
+      clearInterval(countdown)
     }
-    // display it
     displayTimeLeft(secondsLeft);
   }, 1000);
 }
@@ -59,7 +85,6 @@ function startTimer() {
 function timerNotification(seconds) {
     let n = new Notification('Timer started!',{
         body: 'Gotta go fast',
-        button: 'Keep Going'
     });
 }
 

@@ -35,11 +35,17 @@ app.on('ready', () => {
   // our popup window
   tray.on('click', function(event) {
     toggleWindow();
+    //dev tools
+    //window.webContents.openDevTools({mode: 'undocked'});
   })
 
   ipcMain.on('open-window', () => {
-    toggleWindow();
+    showWindow();
   });
+
+  ipcMain.on('close-window', () => {
+    window.hide();
+  })
 
   // Make the popup window for the menubar
   window = new BrowserWindow({

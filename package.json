@@ -1,6 +1,6 @@
 {
     "name": "Pomotron",
-    "version": "1.0.5",
+    "version": "1.1.0",
     "description": "",
     "main": "main.js",
     "scripts": {
@@ -26,14 +26,15 @@
         "babel-polyfill": "^6.26.0",
         "electron-gh-releases": "^2.0.4",
         "electron-is-dev": "^0.3.0",
-        "electron-settings": "^3.1.4"
+        "electron-settings": "^3.1.4",
+        "node-notifier": "^5.2.1"
     },
     "build": {
         "appId": "com.electron.Pomotron",
         "copyright": "Copyright © 2018 Matt Budde",
         "productName": "Pomotron",
         "electronVersion": "1.7.11",
-        "asar": true,
+        "asar": false,
         "directories": {
             "app": "/Users/matthewbudde/pomotron",
             "output": "dist"
