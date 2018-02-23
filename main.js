@@ -44,7 +44,7 @@ app.on("ready", () => {
   tray.on("click", function(event) {
     toggleWindow();
     //dev tools
-    //window.webContents.openDevTools({mode: 'undocked'});
+    window.webContents.openDevTools({ mode: "undocked" });
   });
 
   ipcMain.on("open-window", () => {
@@ -115,16 +115,41 @@ app.on("window-all-closed", () => {
 //About this app menu build
 const menu = Menu.buildFromTemplate([
   {
-    label: "Example",
+    label: app.getName(),
     submenu: [
       {
-        label: "About This App",
+        label: "Check for Updates",
+        click: () => appUpdater()
+      },
+      {
+        label: "About",
         click: () =>
           openAboutWindow({
             icon_path: path.join(__dirname, "/assets/img/logo.png"),
             copyright: "Copyright (c) 2018 Matt Budde",
             package_json_dir: __dirname
           })
+      },
+      {
+        type: "separator"
+      },
+      {
+        label: "Quit",
+        accelerator: "'CmdOrCtrl+Q'",
+        role: "quit"
+      }
+    ]
+  },
+  {
+    label: "Help",
+    submenu: [
+      {
+        label: "Bug Report",
+        click() {
+          require("electron").shell.openExternal(
+            "https://github.com/mattbudde/pomotron/issues"
+          );
+        }
       }
     ]
   }
