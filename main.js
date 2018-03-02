@@ -12,6 +12,7 @@ const assetsDir = path.join(__dirname, "assets");
 const { appUpdater } = require("./assets/js/autoupdater");
 const isDev = require("electron-is-dev");
 const powerSaveBlocker = require("electron").powerSaveBlocker;
+const fs = require("fs");
 
 const openAboutWindow = require("about-window").default;
 
@@ -44,7 +45,7 @@ app.on("ready", () => {
   tray.on("click", function(event) {
     toggleWindow();
     //dev tools
-    window.webContents.openDevTools({ mode: "undocked" });
+    //window.webContents.openDevTools({ mode: "undocked" });
   });
 
   ipcMain.on("open-window", () => {
@@ -74,6 +75,8 @@ app.on("ready", () => {
     }
   });
 });
+
+
 
 const toggleWindow = () => {
   if (window.isVisible()) {
