@@ -9,7 +9,9 @@ const {
 } = require("electron");
 const path = require("path");
 const assetsDir = path.join(__dirname, "assets");
-const { appUpdater } = require("./assets/js/autoupdater");
+const {
+  appUpdater
+} = require("./assets/js/autoupdater");
 const isDev = require("electron-is-dev");
 const powerSaveBlocker = require("electron").powerSaveBlocker;
 const fs = require("fs");
@@ -26,7 +28,7 @@ let window = undefined;
 // It is effectively the main method of our Electron app
 app.on("ready", () => {
   //Check for updates every 15 Minutes
-  setInterval(function() {
+  setInterval(function () {
     appUpdater();
   }, 900000);
   // Prevent App being put to sleep
@@ -42,7 +44,7 @@ app.on("ready", () => {
   Menu.setApplicationMenu(menu);
   // Add a click handler so that when the user clicks on the menubar icon, it shows
   // our popup window
-  tray.on("click", function(event) {
+  tray.on("click", function (event) {
     toggleWindow();
     //dev tools
     //window.webContents.openDevTools({ mode: "undocked" });
@@ -116,13 +118,17 @@ app.on("window-all-closed", () => {
   }
 });
 //About this app menu build
-const menu = Menu.buildFromTemplate([
-  {
+const menu = Menu.buildFromTemplate([{
     label: app.getName(),
-    submenu: [
-      {
+    submenu: [{
         label: "Check for Updates",
         click: () => appUpdater()
+      },
+      {
+        label: "Buy me a beer 🍺",
+        click: () => {
+          require("electron").shell.openExternal("https://monzo.me/matthewbudde")
+        }
       },
       {
         label: "About",
@@ -145,15 +151,13 @@ const menu = Menu.buildFromTemplate([
   },
   {
     label: "Help",
-    submenu: [
-      {
-        label: "Bug Report",
-        click() {
-          require("electron").shell.openExternal(
-            "https://github.com/mattbudde/pomotron/issues"
-          );
-        }
+    submenu: [{
+      label: "Bug Report 🐛",
+      click() {
+        require("electron").shell.openExternal(
+          "https://github.com/mattbudde/pomotron/issues"
+        );
       }
-    ]
+    }]
   }
 ]);

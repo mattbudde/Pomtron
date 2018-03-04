@@ -1,4 +1,6 @@
-const { ipcRenderer } = require("electron");
+const {
+  ipcRenderer
+} = require("electron");
 const Timr = require("timrjs");
 const notifier = require("node-notifier");
 const nc = new notifier.NotificationCenter();
@@ -27,32 +29,33 @@ function timerNotification() {
 let json2csvCallback = function (err, csv) {
   if (err) throw err;
   console.log(csv);
-  fs.appendFileSync( usrHome + '/Desktop/pomotron-stats.csv', csv, 'utf-8');
+  let fileDate = new Date().toJSON().slice(0, 10);
+  fs.appendFile(usrHome + '/Desktop/pomotron-stats ' + fileDate + '.csv', csv, 'utf-8');
 };
 
 let options = {
-  delimiter : {
-      wrap  : '"', // Double Quote (") character
-      field : ',', // Comma field delimiter
-      array : ';', // Semicolon array value delimiter
-      eol   : '\n', // Newline delimiter
+  delimiter: {
+    wrap: '"', // Double Quote (") character
+    field: ',', // Comma field delimiter
+    array: ';', // Semicolon array value delimiter
+    eol: '\n', // Newline delimiter
   },
-  prependHeader    : true,
-  sortHeader       : false,
-  trimHeaderValues : true,
-  trimFieldValues  :  true,
-  keys             : ['Pomodoro', 'ShortBreak', 'LongBreak', 'RecordDate', 'RecordTime']
+  prependHeader: true,
+  sortHeader: false,
+  trimHeaderValues: true,
+  trimFieldValues: true,
+  keys: ['Pomodoro', 'ShortBreak', 'LongBreak', 'RecordDate', 'RecordTime']
 };
 
 function dataHandler(Pomodoro, ShortBreak, LongBreak, RecordDate, RecordTime) {
-  let utc = new Date().toJSON().slice(0,10);
+  let utc = new Date().toJSON().slice(0, 10);
   this.Pomodoro = Pomodoro;
   this.ShortBreak = ShortBreak;
   this.LongBreak = LongBreak;
   this.RecordDate = utc;
   this.RecordTime = RecordTime;
 
-  if(fs.existsSync(usrHome + '/Desktop/pomotron-stats.csv')) {
+  if (fs.existsSync(usrHome + '/Desktop/pomotron-stats ' + utc + '.csv')) {
     options.prependHeader = false;
   } else {
     options.prependHeader = true;
@@ -68,7 +71,9 @@ function startPomo() {
   timerDisplay.textContent = pomoTimer.getFt();
   endTime.textContent = "Get to work!";
 
-  pomoTimer.ticker(({ formattedTime }) => {
+  pomoTimer.ticker(({
+    formattedTime
+  }) => {
     timerDisplay.textContent = formattedTime;
   });
 
@@ -91,7 +96,9 @@ function startLb() {
   timerDisplay.textContent = longBreakTimer.getFt();
   endTime.textContent = "Take a break!";
 
-  longBreakTimer.ticker(({ formattedTime }) => {
+  longBreakTimer.ticker(({
+    formattedTime
+  }) => {
     timerDisplay.textContent = formattedTime;
   });
 
@@ -114,7 +121,9 @@ function startSb() {
   timerDisplay.textContent = shortBreakTimer.getFt();
   endTime.textContent = "Take a quick break!";
 
-  shortBreakTimer.ticker(({ formattedTime }) => {
+  shortBreakTimer.ticker(({
+    formattedTime
+  }) => {
     timerDisplay.textContent = formattedTime;
   });
 
@@ -133,8 +142,7 @@ function pomoNotify() {
   let trueAnswer = ["Short Break", "Long Break"];
   let label = "Keep Going";
   //console.log("Pomodoro Finished");
-  nc.notify(
-    {
+  nc.notify({
       title: "Ding!",
       message: "Keep going or take a break",
       sound: "Funk",
@@ -144,7 +152,7 @@ function pomoNotify() {
       closeLabel: label,
       wait: false
     },
-    function(error, response, metadata) {
+    function (error, response, metadata) {
       if (metadata.activationValue === "Long Break") {
         longBreak.disabled = true;
         shortBreak.disabled = false;
