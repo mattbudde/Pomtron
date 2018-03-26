@@ -1,6 +1,6 @@
 {
     "name": "Pomotron",
-    "version": "1.1.4",
+    "version": "1.1.6",
     "description": "",
     "main": "main.js",
     "scripts": {
@@ -17,7 +17,7 @@
     "author": "Matt Budde",
     "license": "CC0-1.0",
     "devDependencies": {
-        "electron": "^1.7.11",
+        "electron": "^1.8.4",
         "electron-builder": "^19.52.1",
         "electron-toolkit": "^1.0.24"
     },
@@ -36,7 +36,7 @@
         "appId": "com.electron.Pomotron",
         "copyright": "Copyright © 2018 Matt Budde",
         "productName": "Pomotron",
-        "electronVersion": "1.7.11",
+        "electronVersion": "1.8.4",
         "asar": false,
         "directories": {
             "app": "/Users/matthewbudde/pomotron",

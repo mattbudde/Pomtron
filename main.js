@@ -2,16 +2,18 @@ const {
   app,
   Menu,
   BrowserWindow,
+  autoUpdater,
   ipcMain,
   Tray,
+  dialog,
   nativeImage,
   systemPreferences
 } = require("electron");
+const os = require("os");
+const version = app.getVersion();
+const platform = os.platform() + "_" + os.arch();
 const path = require("path");
 const assetsDir = path.join(__dirname, "assets");
-const {
-  appUpdater
-} = require("./assets/js/autoupdater");
 const isDev = require("electron-is-dev");
 const powerSaveBlocker = require("electron").powerSaveBlocker;
 const fs = require("fs");
@@ -21,16 +23,16 @@ const openAboutWindow = require("about-window").default;
 const darkIcon = path.join(__dirname, "assets/img/icon-dark.png");
 const lightIcon = path.join(__dirname, "assets/img/icon.png");
 
+const server = "https://hazel-server-dwrilkxyqz.now.sh";
+const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
+
 let tray = undefined;
 let window = undefined;
 
 // This method is called once Electron is ready to run our code
 // It is effectively the main method of our Electron app
 app.on("ready", () => {
-  //Check for updates every 15 Minutes
-  setInterval(function () {
-    appUpdater();
-  }, 900000);
+  //Check for updates on boot
   // Prevent App being put to sleep
   powerSaveBlocker.start("prevent-app-suspension");
   // Setup the menubar with an icon
@@ -47,7 +49,7 @@ app.on("ready", () => {
   tray.on("click", function (event) {
     toggleWindow();
     //dev tools
-    //window.webContents.openDevTools({ mode: "undocked" });
+    //window.webContents.openDevTools({mode: "undocked"});
   });
 
   ipcMain.on("open-window", () => {
@@ -64,7 +66,8 @@ app.on("ready", () => {
     height: 200,
     show: false,
     frame: false,
-    resizable: false
+    resizable: false,
+    backgroundColor: '#0c2a55'
   });
 
   // Tell the popup window to load our index.html file
@@ -77,8 +80,6 @@ app.on("ready", () => {
     }
   });
 });
-
-
 
 const toggleWindow = () => {
   if (window.isVisible()) {
@@ -117,12 +118,12 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
-//About this app menu build
+
 const menu = Menu.buildFromTemplate([{
     label: app.getName(),
     submenu: [{
-        label: "Check for Updates",
-        click: () => appUpdater()
+        label: "Check for Updates...",
+        click: () => autoUpdater.checkForUpdates(),
       },
       {
         label: "Buy me a beer 🍺",
@@ -161,3 +162,47 @@ const menu = Menu.buildFromTemplate([{
     }]
   }
 ]);
+
+if (!isDev) {
+  autoUpdater.setFeedURL(feed);
+}
+autoUpdater.on("error", err => console.log(err));
+autoUpdater.on("checking-for-update", () => console.log("checking-for-update"));
+autoUpdater.on("update-available", () => console.log("update-available"));
+autoUpdater.on("update-not-available", () => {
+  dialog.showMessageBox({
+    type: "info",
+    buttons: ["Cancel"],
+    cancelId: 0,
+    message: "You are running the latest version of " + app.getName() + " 🎉",
+  });
+});
+// Ask the user if update is available
+autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
+  let message =
+    app.getName() +
+    " " +
+    releaseName +
+    " is now available. It will be installed the next time you restart the application.";
+  if (releaseNotes) {
+    const splitNotes = releaseNotes.split(/[^\r]\n/);
+    message += "\n\nRelease notes:\n";
+    splitNotes.forEach(notes => {
+      message += notes + "\n\n";
+    });
+  }
+  // Ask user to update the app
+  dialog.showMessageBox({
+      type: "question",
+      buttons: ["Install and Relaunch", "Later"],
+      defaultId: 0,
+      message: "A new version of " + app.getName() + " has been downloaded",
+      detail: message
+    },
+    response => {
+      if (response === 0) {
+        setTimeout(() => autoUpdater.quitAndInstall(), 1);
+      }
+    }
+  );
+});
