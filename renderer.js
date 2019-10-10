@@ -1,23 +1,22 @@
-const {
-  ipcRenderer
-} = require("electron");
+const { ipcRenderer } = require("electron");
 const Timr = require("timrjs");
 const notifier = require("node-notifier");
-const nc = new notifier.NotificationCenter();
 const fs = require("fs");
 const path = require("path");
 const converter = require("json-2-csv");
 const usrHome = require("user-home");
 
+const nc = new notifier.NotificationCenter();
+
 //Getters
 const timerDisplay = document.querySelector(".display__time-left");
 const endTime = document.querySelector(".display__end-time");
-const pomodoro = document.querySelector("#pomo");
-const shortBreak = document.querySelector("#short__break");
-const longBreak = document.querySelector("#long__break");
+const standardBreakSelector = document.querySelector("#pomo");
+const shortBreakSelector = document.querySelector("#short__break");
+const longBreakSelector = document.querySelector("#long__break");
 
-const pomoTimer = Timr("25:00");
 const shortBreakTimer = Timr("05:00");
+const standardBreakTimer = Timr("25:00");
 const longBreakTimer = Timr("15:00");
 
 function timerNotification() {
@@ -26,9 +25,8 @@ function timerNotification() {
   });
 }
 
-let json2csvCallback = function (err, csv) {
+let writeLogStatsCallback = function (err, csv) {
   if (err) throw err;
-  console.log(csv);
   let fileDate = new Date().toJSON().slice(0, 10);
   fs.appendFile(usrHome + '/Desktop/pomotron-stats ' + fileDate + '.csv', csv, 'utf-8');
 };
@@ -47,7 +45,7 @@ let options = {
   keys: ['Pomodoro', 'ShortBreak', 'LongBreak', 'RecordDate', 'RecordTime']
 };
 
-function dataHandler(Pomodoro, ShortBreak, LongBreak, RecordDate, RecordTime) {
+function dataHandler(pomodoro, ShortBreak, LongBreak, RecordDate, RecordTime) {
   let utc = new Date().toJSON().slice(0, 10);
   this.Pomodoro = Pomodoro;
   this.ShortBreak = ShortBreak;
@@ -62,35 +60,38 @@ function dataHandler(Pomodoro, ShortBreak, LongBreak, RecordDate, RecordTime) {
   }
 };
 
-function startPomo() {
+function startStandardBreak() {
   shortBreakTimer.destroy();
   longBreakTimer.destroy();
-  pomoTimer.start();
+  standardBreakTimer.start();
+
   timerNotification();
 
-  timerDisplay.textContent = pomoTimer.getFt();
+  timerDisplay.textContent = standardBreakTimer.getFt();
   endTime.textContent = "Get to work!";
 
-  pomoTimer.ticker(({
+  standardBreakTimer.ticker(({
     formattedTime
   }) => {
     timerDisplay.textContent = formattedTime;
   });
 
-  pomoTimer.finish(() => {
-    let timerData = pomoTimer.getFt();
+  standardBreakTimer.finish(() => {
+    let timerData = standardBreakTimer.getFt();
     let currentTime = new Date().toTimeString().split(" ")[0];
     let record = new dataHandler(timerData, '00:00', '00:00', '', currentTime);
-    converter.json2csv(record, json2csvCallback, options);
-    pomoTimer.destroy();
-    pomodoro.disabled = false;
-    pomoNotify();
+
+    converter.json2csv(record, writeLogStatsCallback, options);
+    standardBreakTimer.destroy();
+    standardBreakSelector.disabled = false;
+
+    notifyUser();
   });
 }
 
-function startLb() {
+function startLongBreak() {
   shortBreakTimer.destroy();
-  pomoTimer.destroy();
+  standardBreakTimer.destroy();
   longBreakTimer.start();
 
   timerDisplay.textContent = longBreakTimer.getFt();
@@ -106,15 +107,15 @@ function startLb() {
     let timerData = longBreakTimer.getFt();
     let currentTime = new Date().toTimeString().split(" ")[0];
     let record = new dataHandler('00:00', '00:00', timerData, '', currentTime);
-    converter.json2csv(record, json2csvCallback, options);
+    converter.json2csv(record, writeLogStatsCallback, options);
     longBreakTimer.destroy();
     longBreak.disabled = false;
-    pomoNotify();
+    notifyUser();
   });
 }
 
-function startSb() {
-  pomoTimer.destroy();
+function startShortBreak() {
+  standardBreakTimer.destroy();
   longBreakTimer.destroy();
   shortBreakTimer.start();
 
@@ -131,14 +132,16 @@ function startSb() {
     let timerData = shortBreakTimer.getFt();
     let currentTime = new Date().toTimeString().split(" ")[0];
     let record = new dataHandler('00:00', timerData, '00:00', '', currentTime);
-    converter.json2csv(record, json2csvCallback, options);
+
+    converter.json2csv(record, writeLogStatsCallback, options);
     shortBreakTimer.destroy();
     shortBreak.disabled = false;
-    pomoNotify();
+
+    notifyUser();
   });
 }
 
-function pomoNotify() {
+function notifyUser() {
   let trueAnswer = ["Short Break", "Long Break"];
   let label = "Keep Going";
   //console.log("Pomodoro Finished");
@@ -154,47 +157,44 @@ function pomoNotify() {
     },
     function (error, response, metadata) {
       if (metadata.activationValue === "Long Break") {
-        longBreak.disabled = true;
-        shortBreak.disabled = false;
-        startLb();
+        longBreakSelector.disabled = true;
+        shortBreakSelector.disabled = false;
+        startLongBreak();
       }
       if (metadata.activationValue === "Short Break") {
-        shortBreak.disabled = true;
-        longBreak.disabled = false;
-        startSb();
+        shortBreakSelector.disabled = true;
+        longBreakSelector.disabled = false;
+        startShortBreak();
       }
       if (metadata.activationValue === "Keep Going") {
-        pomodoro.disabled = true;
-        shortBreak.disabled = false;
-        startPomo();
+        standardBreakSelector.disabled = true;
+        shortBreakSelector.disabled = false;
+        startStandardBreak();
       }
     }
   );
 }
 
-pomodoro.addEventListener("click", () => {
-  pomodoro.disabled = true;
-  shortBreak.disabled = true;
-  longBreak.disabled = true;
+function reset() {
+  standardBreakSelector.disabled = true;
+  shortBreakSelector.disabled = true;
+  longBreakSelector.disabled = true;
+
   shortBreakTimer.stop();
   longBreakTimer.stop();
-  startPomo();
+};
+
+standardBreak.addEventListener("click", () => {
+  reset();
+  startStandardBreak();
 });
 
 shortBreak.addEventListener("click", () => {
-  shortBreak.disabled = true;
-  pomodoro.disabled = true;
-  longBreak.disabled = true;
-  pomoTimer.stop();
-  longBreakTimer.stop();
-  startSb();
+  reset();
+  startShortBreak();
 });
 
 longBreak.addEventListener("click", () => {
-  longBreak.disabled = true;
-  pomodoro.disabled = true;
-  shortBreak.disabled = true;
-  shortBreakTimer.stop();
-  pomoTimer.stop();
-  startLb();
+  reset();
+  startLongBreak();
 });
