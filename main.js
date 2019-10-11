@@ -1,3 +1,6 @@
+const os = require("os");
+const path = require("path");
+const fs = require("fs");
 const {
   app,
   Menu,
@@ -9,17 +12,14 @@ const {
   nativeImage,
   systemPreferences
 } = require("electron");
-const os = require("os");
+
+const isDev = require("electron-is-dev");
+const openAboutWindow = require("about-window").default;
+const powerSaveBlocker = require("electron").powerSaveBlocker;
+
+const assetsDir = path.join(__dirname, "assets");
 const version = app.getVersion();
 const platform = os.platform() + "_" + os.arch();
-const path = require("path");
-const assetsDir = path.join(__dirname, "assets");
-const isDev = require("electron-is-dev");
-const powerSaveBlocker = require("electron").powerSaveBlocker;
-const fs = require("fs");
-
-const openAboutWindow = require("about-window").default;
-
 const darkIcon = path.join(__dirname, "assets/img/icon-dark.png");
 const lightIcon = path.join(__dirname, "assets/img/icon.png");
 
@@ -67,7 +67,7 @@ app.on("ready", () => {
     show: false,
     frame: false,
     resizable: false,
-    backgroundColor: '#0c2a55'
+    backgroundColor: "#0c2a55"
   });
 
   // Tell the popup window to load our index.html file
@@ -92,13 +92,13 @@ const toggleWindow = () => {
 const showWindow = () => {
   const trayPos = tray.getBounds();
   const windowPos = window.getBounds();
-  let x,
-    y = 0;
+  let x, y = 0;
+
+  x = Math.round(trayPos.x + trayPos.width / 2 - windowPos.width / 2);
+
   if (process.platform == "darwin") {
-    x = Math.round(trayPos.x + trayPos.width / 2 - windowPos.width / 2);
     y = Math.round(trayPos.y + trayPos.height);
   } else {
-    x = Math.round(trayPos.x + trayPos.width / 2 - windowPos.width / 2);
     y = Math.round(trayPos.y + trayPos.height * 10);
   }
 
@@ -119,16 +119,20 @@ app.on("window-all-closed", () => {
   }
 });
 
-const menu = Menu.buildFromTemplate([{
+const menu = Menu.buildFromTemplate([
+  {
     label: app.getName(),
-    submenu: [{
+    submenu: [
+      {
         label: "Check for Updates...",
-        click: () => autoUpdater.checkForUpdates(),
+        click: () => autoUpdater.checkForUpdates()
       },
       {
         label: "Buy me a beer 🍺",
         click: () => {
-          require("electron").shell.openExternal("https://monzo.me/matthewbudde")
+          require("electron").shell.openExternal(
+            "https://monzo.me/matthewbudde"
+          );
         }
       },
       {
@@ -136,7 +140,7 @@ const menu = Menu.buildFromTemplate([{
         click: () =>
           openAboutWindow({
             icon_path: path.join(__dirname, "/assets/img/logo.png"),
-            copyright: "Copyright (c) 2018 Matt Budde",
+            copyright: "Copyright (c) 2019 Matt Budde",
             package_json_dir: __dirname
           })
       },
@@ -152,14 +156,16 @@ const menu = Menu.buildFromTemplate([{
   },
   {
     label: "Help",
-    submenu: [{
-      label: "Bug Report 🐛",
-      click() {
-        require("electron").shell.openExternal(
-          "https://github.com/mattbudde/pomotron/issues"
-        );
+    submenu: [
+      {
+        label: "Bug Report 🐛",
+        click() {
+          require("electron").shell.openExternal(
+            "https://github.com/mattbudde/pomotron/issues"
+          );
+        }
       }
-    }]
+    ]
   }
 ]);
 
@@ -174,10 +180,10 @@ autoUpdater.on("update-not-available", () => {
     type: "info",
     buttons: ["Cancel"],
     cancelId: 0,
-    message: "You are running the latest version of " + app.getName() + " 🎉",
+    message: "You are running the latest version of " + app.getName() + " 🎉"
   });
-});
-// Ask the user if update is available
+}); // Ask the user if update is available
+
 autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
   let message =
     app.getName() +
@@ -190,9 +196,9 @@ autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
     splitNotes.forEach(notes => {
       message += notes + "\n\n";
     });
-  }
-  // Ask user to update the app
-  dialog.showMessageBox({
+  } // Ask user to update the app
+  dialog.showMessageBox(
+    {
       type: "question",
       buttons: ["Install and Relaunch", "Later"],
       defaultId: 0,
